@@ -14,6 +14,10 @@ A Model Context Protocol (MCP) server that bridges Home Assistant and LLMs, enab
 
 ## Configuration
 
+### API Key (Recommended)
+
+Set `mcp_api_key` to a secret string of your choice. This protects the MCP endpoint so only clients with the key can connect. Without it, anyone on your network could control your smart home.
+
 ### Token
 
 By default, the add-on uses the **Supervisor API token** (auto-provided by Home Assistant). This works for most Core API operations out of the box.
@@ -24,28 +28,11 @@ If you need to use a **long-lived access token** instead (e.g., for HACS or cert
 
 | Option | Description | Default |
 |---|---|---|
+| `mcp_api_key` | Secret key to protect the MCP endpoint. **Set this!** | _(empty)_ |
 | `log_level` | Logging verbosity: `debug`, `info`, `warn`, `error` | `info` |
 | `hass_token` | Optional long-lived access token. Leave blank to use the Supervisor token. | _(empty)_ |
 
-## Network
-
-The add-on exposes an HTTP API on **port 3000** with the following endpoints:
-
-| Endpoint | Method | Description |
-|---|---|---|
-| `/health` | GET | Health check |
-| `/list_devices` | GET | List all HA devices |
-| `/control` | POST | Control devices |
-| `/subscribe_events` | GET | SSE event subscription |
-| `/get_sse_stats` | GET | SSE connection stats |
-
-The MCP protocol is also available via stdio for direct LLM integration.
-
-## Connecting an LLM
-
-Point your MCP-compatible LLM client to `http://<your-ha-ip>:3001` to start controlling your smart home with natural language.
-
-### Cursor MCP Config
+## Connecting from Cursor
 
 Add this to your Cursor `mcp.json`:
 
@@ -53,8 +40,20 @@ Add this to your Cursor `mcp.json`:
 {
   "mcpServers": {
     "homeassistant": {
-      "url": "http://<your-ha-ip>:3001/sse"
+      "url": "http://<your-ha-ip>:3001/sse?api_key=<your-mcp-api-key>"
     }
   }
 }
 ```
+
+Replace `<your-ha-ip>` with your Home Assistant IP and `<your-mcp-api-key>` with the key you set in the add-on config.
+
+## Network
+
+The add-on exposes the MCP SSE endpoint on **port 3001** (host).
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/sse` | GET | MCP SSE connection (requires `api_key`) |
+| `/message` | POST | MCP message endpoint (requires `api_key`) |
+| `/health` | GET | Health check |
