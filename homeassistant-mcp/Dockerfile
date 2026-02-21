@@ -1,17 +1,25 @@
 FROM node:20-alpine
 
-RUN apk add --no-cache jq git curl
+RUN apk add --no-cache \
+    jq \
+    git \
+    curl \
+    python3 \
+    make \
+    g++
 
 WORKDIR /app
 
-RUN git clone --depth 1 https://github.com/jaburges/homeassistant-mcp.git .
+ARG BUILD_VERSION
+RUN echo "Building version: ${BUILD_VERSION}" && \
+    git clone --depth 1 https://github.com/jaburges/homeassistant-mcp.git .
 
-RUN npm install
+RUN npm install --production=false
 
 RUN npm run build
 
 COPY run.sh /run.sh
-RUN chmod a+x /run.sh
+RUN sed -i 's/\r$//' /run.sh && chmod a+x /run.sh
 
 EXPOSE 3000
 
