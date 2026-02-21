@@ -21,13 +21,16 @@ else
     export HASS_SOCKET_URL="ws://supervisor/core/api/websocket"
 fi
 
-export PORT=3000
+export PORT=3100
+export MCP_TRANSPORT=sse
+export MCP_SSE_PORT=3000
 export NODE_ENV=production
 export LOG_LEVEL
 
 echo "Starting Home Assistant MCP Server..."
 echo "  HASS_HOST: ${HASS_HOST}"
-echo "  PORT: ${PORT}"
+echo "  MCP SSE:   port ${MCP_SSE_PORT} (/sse)"
+echo "  REST API:  port ${PORT}"
 echo "  LOG_LEVEL: ${LOG_LEVEL}"
 echo "  Token source: $([ -n "$HASS_TOKEN_OPT" ] && echo 'user-provided' || echo 'supervisor')"
 
