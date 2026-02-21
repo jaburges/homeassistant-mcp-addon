@@ -43,4 +43,18 @@ The MCP protocol is also available via stdio for direct LLM integration.
 
 ## Connecting an LLM
 
-Point your MCP-compatible LLM client to `http://<your-ha-ip>:3000` to start controlling your smart home with natural language.
+Point your MCP-compatible LLM client to `http://<your-ha-ip>:3001` to start controlling your smart home with natural language.
+
+### Cursor MCP Config
+
+Add this to your Cursor `mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "homeassistant": {
+      "url": "http://<your-ha-ip>:3001/sse"
+    }
+  }
+}
+```
